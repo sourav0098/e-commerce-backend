@@ -52,4 +52,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ApiResponse response=ApiResponse.builder().message(message).status(HttpStatus.BAD_REQUEST.value()).timestamp(System.currentTimeMillis()).build();
 		return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(BadApiRequestException.class)
+	public ResponseEntity<ApiResponse> handleBadApiRequest(BadApiRequestException ex){
+		String message=ex.getMessage();
+		ApiResponse response=ApiResponse.builder().message(message).status(HttpStatus.BAD_REQUEST.value()).timestamp(System.currentTimeMillis()).build();
+		return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);
+	}
 }

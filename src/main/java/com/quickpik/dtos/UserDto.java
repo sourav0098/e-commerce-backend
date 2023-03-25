@@ -3,6 +3,8 @@ package com.quickpik.dtos;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.quickpik.validators.ImageNameValid;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -48,6 +50,9 @@ public class UserDto {
 	private String city;
 	@Size(max = 100, message = "Province name cant be longer than 100 characters")
 	private String province;
+	
+	// Custom validator annotation
+	@ImageNameValid
 	private String image;
 	
 	@JsonProperty("created_at")

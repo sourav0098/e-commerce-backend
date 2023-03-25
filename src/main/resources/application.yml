@@ -16,3 +16,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect  
+
+#File config
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+        
+
+# Image upload path
+image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images"
