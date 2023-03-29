@@ -91,7 +91,7 @@ public class UserController {
 
 	// Delete user
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String userId) {
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String userId) throws IOException {
 		UserDto user = userService.getUserById(userId);
 		if (user == null) {
 			ApiResponse response = ApiResponse.builder().message("User not found").status(HttpStatus.NOT_FOUND.value())

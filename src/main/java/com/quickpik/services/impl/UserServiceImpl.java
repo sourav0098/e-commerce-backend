@@ -1,4 +1,4 @@
-package com.quickpik.services;
+package com.quickpik.services.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import com.quickpik.entities.User;
 import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.helper.Helper;
 import com.quickpik.repositories.UserRepository;
+import com.quickpik.services.UserService;
 
 /**
  * This class implements the UserService interface and provides the business

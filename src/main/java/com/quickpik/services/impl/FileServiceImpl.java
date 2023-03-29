@@ -1,4 +1,4 @@
-package com.quickpik.services;
+package com.quickpik.services.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.quickpik.exception.BadApiRequestException;
+import com.quickpik.services.FileService;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -19,9 +19,8 @@ public class ImageNameValidator implements ConstraintValidator<ImageNameValid, S
 			return false;
 		} else {
 			logger.info("Valid image name");
-			return false;
+			return true;
 		}
-
 	}
 
 }
