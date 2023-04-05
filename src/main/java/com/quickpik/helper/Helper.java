@@ -45,6 +45,7 @@ public class Helper {
 		response.setTotalPages(page.getTotalPages());
 		response.setLastPage(page.isLast());
 
+		// Return the new PageableResponse object with the mapped DTOs
 		return response;
 	}
 }

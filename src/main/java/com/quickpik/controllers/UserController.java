@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
-	@Value("${image-path}")
+	@Value("${user-image-path}")
 	private String imageUploadPath;
 
 	@Autowired
@@ -52,6 +52,8 @@ public class UserController {
 			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = "fname", required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
+
+		// Call the UserService to get the paginated list of users
 		PageableResponse<UserDto> users = this.userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
 		return new ResponseEntity<PageableResponse<UserDto>>(users, HttpStatus.OK);
 	}
@@ -59,6 +61,7 @@ public class UserController {
 //	Get a user by user id
 	@GetMapping("/{userId}")
 	public ResponseEntity<UserDto> getUserById(@PathVariable String userId) {
+		// Return the user in a ResponseEntity with HttpStatus.OK
 		return new ResponseEntity<UserDto>(this.userService.getUserById(userId), HttpStatus.OK);
 	}
 
@@ -108,23 +111,46 @@ public class UserController {
 	// Upload user image
 	@PostMapping("/image/{userId}")
 	public ResponseEntity<ApiResponse> uploadUserImage(@PathVariable("userId") String userId,
-			@RequestParam("image") MultipartFile image) throws IOException {
-		String imageName = this.fileService.uploadImage(image, imageUploadPath);
-		UserDto user = this.userService.getUserById(userId);
-		user.setImage(imageName);
-		userService.updateUser(user, userId);
-		ApiResponse apiResponse = ApiResponse.builder().message(imageName).status(HttpStatus.CREATED.value())
-				.timestamp(System.currentTimeMillis()).build();
-		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.CREATED);
+			@RequestParam("image") MultipartFile image) {
+		String imageName;
+		try {
+
+			// upload image and returns image name
+			imageName = this.fileService.uploadImage(image, imageUploadPath);
+
+			// get user by id and set the image name for the user
+			UserDto userDto = this.userService.getUserById(userId);
+			userDto.setImage(imageName);
+			userService.updateUser(userDto, userId);
+
+			// Build the API response with success message and status code
+			ApiResponse apiResponse = ApiResponse.builder().message(imageName).status(HttpStatus.CREATED.value())
+					.timestamp(System.currentTimeMillis()).build();
+			return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.CREATED);
+		} catch (IOException e) {
+			e.printStackTrace();
+			// Build the API response with error message and status code
+			ApiResponse apiResponse = ApiResponse.builder().message("Something went wrong! Please try again")
+					.status(HttpStatus.BAD_REQUEST.value()).timestamp(System.currentTimeMillis()).build();
+			return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	// Serve images
 	@GetMapping("/image/{userId}")
 	public void serveUserImage(@PathVariable String userId, HttpServletResponse response) throws IOException {
-		UserDto user=this.userService.getUserById(userId);
-		InputStream resource=fileService.getResource(imageUploadPath, user.getImage());
+
+		// get the user by user id
+		UserDto user = this.userService.getUserById(userId);
+
+		// retrieve the user's image from the specified resource location
+		InputStream resource = fileService.getResource(imageUploadPath, user.getImage());
+		
+		// set the response content type to image/jpeg
 		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		StreamUtils.copy(resource,response.getOutputStream());
+		
+		// copy the image data to the response output stream
+		StreamUtils.copy(resource, response.getOutputStream());
 	}
 
 }

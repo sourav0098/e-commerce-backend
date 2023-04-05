@@ -1,11 +1,18 @@
 package com.quickpik.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,16 +29,14 @@ import lombok.Setter;
 @Table(name="categories")
 public class Category {
 	@Id
-	@Column(name = "category_id")
 	private String categoryId;
 
-	@Column(name = "category_title", length = 60, nullable = false)
+	@Column(length = 60, nullable = false)
 	private String categoryTitle;
 	
 	@Column(nullable = false)
 	private String description;
 
-	@Column(name = "category_image")
 	private String categoryImage;
 	
 	@CreationTimestamp
@@ -41,4 +46,7 @@ public class Category {
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private Date updatedAt;
+	
+	@OneToMany(mappedBy = "category",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+	private List<Product> products=new ArrayList<>();
 }

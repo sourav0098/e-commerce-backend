@@ -25,4 +25,6 @@ spring:
         
 
 # Image upload path
-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images"
+user-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\users"
+category-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\categories"
+product-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\products"

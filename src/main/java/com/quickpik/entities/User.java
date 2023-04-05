@@ -22,7 +22,6 @@ import lombok.ToString;
 @Table(name = "users")
 public class User {
 	@Id
-	@Column(name = "user_id")
 	private String userId;
 	
 	@Column(nullable=false)
@@ -42,7 +41,7 @@ public class User {
 	@Column(nullable = true)
 	private String address;
 
-	@Column(name = "postal_code", length = 6, nullable = true)
+	@Column(length = 6, nullable = true)
 	private String postalCode;
 	
 	@Column(nullable = true)
@@ -55,10 +54,10 @@ public class User {
 	private String image;
 
 	@CreationTimestamp
-	@Column(name = "created_at", nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false)
 	private Date createdAt;
 
 	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = false)
+	@Column(nullable = false)
 	private Date updatedAt;
 }

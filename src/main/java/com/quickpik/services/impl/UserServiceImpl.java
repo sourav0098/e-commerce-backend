@@ -35,7 +35,7 @@ import com.quickpik.services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Value("${image-path}")
+	@Value("${user-image-path}")
 	private String imagePath;
 	
 	@Autowired

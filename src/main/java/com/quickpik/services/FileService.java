@@ -6,7 +6,9 @@ import java.io.InputStream;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
+	// Returns an input stream for a resource with the specified path and name
 	InputStream getResource(String path, String name) throws FileNotFoundException;
-	String uploadImage(MultipartFile file, String path) throws IOException;
 	
+	// uploads an image file to the specified path and returns the file name
+	String uploadImage(MultipartFile file, String path) throws IOException;
 }
