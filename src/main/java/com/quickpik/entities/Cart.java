@@ -12,53 +12,31 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
+@Table(name = "cart")
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+@NoArgsConstructor
+public class Cart {
 	@Id
-	private String userId;
+	private String cartId;
 
-	@Column(nullable = false)
-	private String fname;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
-	@Column(nullable = false)
-	private String lname;
-
-	@Column(unique = true, nullable = false)
-	private String email;
-
-	private String password;
-
-	@Column(nullable = true)
-	private String phone;
-
-	@Column(nullable = true)
-	private String address;
-
-	@Column(length = 6, nullable = true)
-	private String postalCode;
-
-	@Column(nullable = true)
-	private String city;
-
-	@Column(nullable = true)
-	private String province;
-
-	@Column(nullable = true)
-	private String image;
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	private List<CartItem> items = new ArrayList<>();
 
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)
@@ -67,7 +45,4 @@ public class User {
 	@UpdateTimestamp
 	@Column(nullable = false)
 	private Date updatedAt;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
-	private List<Order> orders = new ArrayList<>();
 }
