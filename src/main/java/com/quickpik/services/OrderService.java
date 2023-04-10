@@ -1,10 +1,10 @@
 package com.quickpik.services;
 
 import java.util.List;
-
 import com.quickpik.dtos.CreateOrderRequest;
 import com.quickpik.dtos.OrderDto;
 import com.quickpik.dtos.PageableResponse;
+import com.quickpik.dtos.UpdateOrderRequest;
 
 public interface OrderService {
 
@@ -16,6 +16,9 @@ public interface OrderService {
 
 	// create order
 	OrderDto createOrder(CreateOrderRequest orderRequest);
+
+	// update order
+	OrderDto updateOrder(String orderId, UpdateOrderRequest orderRequest);
 
 	// remove order
 	void removeOrder(String orderId);

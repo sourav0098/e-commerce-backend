@@ -8,10 +8,16 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import com.quickpik.dtos.CreateOrderRequest;
 import com.quickpik.dtos.OrderDto;
 import com.quickpik.dtos.PageableResponse;
+import com.quickpik.dtos.UpdateOrderRequest;
 import com.quickpik.entities.Cart;
 import com.quickpik.entities.CartItem;
 import com.quickpik.entities.Order;
@@ -19,11 +25,13 @@ import com.quickpik.entities.OrderItem;
 import com.quickpik.entities.User;
 import com.quickpik.exception.BadApiRequestException;
 import com.quickpik.exception.ResourceNotFoundException;
+import com.quickpik.helper.Helper;
 import com.quickpik.repositories.CartRepository;
 import com.quickpik.repositories.OrderRepository;
 import com.quickpik.repositories.UserRepository;
 import com.quickpik.services.OrderService;
 
+@Service
 public class OrderServiceImpl implements OrderService {
 
 	@Autowired
@@ -40,14 +48,21 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public PageableResponse<OrderDto> getAllOrders(int pageNumber, int pageSize, String sortBy, String sortDir) {
-		// TODO Auto-generated method stub
-		return null;
+		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
+				: (Sort.by(sortBy).descending());
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		Page<Order> page = this.orderRepository.findAll(pageable);
+		return Helper.getPageableResponse(page, OrderDto.class);
 	}
 
 	@Override
 	public List<OrderDto> getOrdersByUser(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		List<Order> orders = this.orderRepository.findByUser(user);
+		List<OrderDto> orderDto = orders.stream().map(order -> modelMapper.map(order, OrderDto.class))
+				.collect(Collectors.toList());
+		return orderDto;
 	}
 
 	@Override
@@ -102,14 +117,30 @@ public class OrderServiceImpl implements OrderService {
 		cart.getItems().clear();
 		this.cartRepository.save(cart);
 		Order savedOrder = this.orderRepository.save(order);
-
 		return modelMapper.map(savedOrder, OrderDto.class);
 	}
 
 	@Override
 	public void removeOrder(String orderId) {
-		// TODO Auto-generated method stub
-
+		Order order = this.orderRepository.findById(orderId)
+				.orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+		this.orderRepository.delete(order);
 	}
 
+	@Override
+	public OrderDto updateOrder(String orderId, UpdateOrderRequest orderRequest) {
+		Order order = this.orderRepository.findById(orderId)
+				.orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+		order.setOrderStatus(orderRequest.getOrderStatus());
+		order.setPaymentStatus(orderRequest.getPaymentStatus());
+		order.setBillingName(orderRequest.getBillingName());
+		order.setOrderAddress(orderRequest.getOrderAddress());
+		order.setCity(orderRequest.getCity());
+		order.setProvince(orderRequest.getProvince());
+		order.setPostalCode(orderRequest.getPostalCode());
+		order.setDeliveredDate(orderRequest.getDeliveredDate());
+		this.orderRepository.save(order);
+		return modelMapper.map(order, OrderDto.class);
+	}
 }

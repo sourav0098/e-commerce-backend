@@ -79,7 +79,7 @@ public class CartServiceImpl implements CartService {
 		List<CartItem> items = cart.getItems();
 
 		// if cart item already present update quantity and price if required
-		List<CartItem> updatedItems = items.stream().map(item -> {
+		items = items.stream().map(item -> {
 			if (item.getProduct().getProductId().equals(productId)) {
 				// item already present in cart update quantity, price and set upated flag to
 				// true
@@ -91,8 +91,6 @@ public class CartServiceImpl implements CartService {
 			return item;
 		}).collect(Collectors.toList());
 
-		// Set the cart to new updated items
-		cart.setItems(updatedItems);
 
 		// In case previous item is updated then we dont need to create new item
 		if (!updated.get()) {
