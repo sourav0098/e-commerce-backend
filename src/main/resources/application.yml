@@ -28,3 +28,6 @@ spring:
 user-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\users"
 category-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\categories"
 product-image-path: "C:\\Users\\soura\\Documents\\e-commerce project\\images\\products"
+
+# JWT Secret Key
+jwt.secret: "e1dfc184c8a2b317c9c37e7dc44af7b9fa2fbe9d808f56e2587df159c7ba6dacd356eab6720f44ef2897eba9778764c3269414e99442b545d1fc091e6d895bab"

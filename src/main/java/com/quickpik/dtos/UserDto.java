@@ -1,10 +1,7 @@
 package com.quickpik.dtos;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.quickpik.validators.ImageNameValid;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -19,7 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-	@JsonProperty("user_id")
 	private String userId;
 
 	@Size(max = 100, message = "First name cant be longer than 100 characters")
@@ -43,21 +39,17 @@ public class UserDto {
 	private String address;
 
 	@Pattern(regexp = "^(?!.*[DFIOQUdfioqu])[A-VXYa-vxy][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$", message = "Please enter valid zip code")
-	@JsonProperty("postal_code")
 	private String postalCode;
 
 	@Size(max = 150, message = "City name cant be longer than 150 characters")
 	private String city;
 	@Size(max = 100, message = "Province name cant be longer than 100 characters")
 	private String province;
-	
+
 	// Custom validator annotation
 	@ImageNameValid
 	private String image;
-	
-	@JsonProperty("created_at")
+
 	private Date createdAt;
-	
-	@JsonProperty("updated_at")
 	private Date updatedAt;
 }

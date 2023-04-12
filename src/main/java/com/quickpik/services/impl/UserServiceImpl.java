@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.quickpik.dtos.PageableResponse;
@@ -37,12 +38,15 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${user-image-path}")
 	private String imagePath;
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	// Retrieve a user by their ID from the database.
 	@Override
@@ -104,6 +108,9 @@ public class UserServiceImpl implements UserService {
 		String userId = UUID.randomUUID().toString();
 		userDto.setUserId(userId);
 
+		// Encoding password
+		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
 		// Convert DTO to entity
 		User user = modelMapper.map(userDto, User.class);
 		User savedUser = this.userRepository.save(user);
@@ -115,7 +122,8 @@ public class UserServiceImpl implements UserService {
 	// Update a user
 	@Override
 	public UserDto updateUser(UserDto userDto, String userId) {
-		User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 		user.setFname(userDto.getFname());
 		user.setLname(userDto.getLname());
 		user.setPassword(userDto.getPassword());
@@ -133,17 +141,16 @@ public class UserServiceImpl implements UserService {
 	// Delete a user
 	@Override
 	public void deleteUser(String userId) throws IOException {
-		User user=this.userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User Not Found"));
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 		// delete profile image
-		String fullPath=imagePath+File.separator+user.getImage();
-		try {			
-			Path path=Paths.get(fullPath);
+		String fullPath = imagePath + File.separator + user.getImage();
+		try {
+			Path path = Paths.get(fullPath);
 			Files.delete(path);
-		}
-		catch(NoSuchFileException ex) {
+		} catch (NoSuchFileException ex) {
 			ex.printStackTrace();
-		}
-		catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		this.userRepository.deleteById(userId);

@@ -9,5 +9,4 @@ public class QuickPikApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QuickPikApplication.class, args);
 	}
-
 }
