@@ -22,9 +22,11 @@ import org.springframework.stereotype.Service;
 
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
+import com.quickpik.entities.Role;
 import com.quickpik.entities.User;
 import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.helper.Helper;
+import com.quickpik.repositories.RoleRepository;
 import com.quickpik.repositories.UserRepository;
 import com.quickpik.services.UserService;
 
@@ -39,9 +41,15 @@ public class UserServiceImpl implements UserService {
 	@Value("${user-image-path}")
 	private String imagePath;
 
+	@Value("${role.normal.id}")
+	private String normalRoleId;
+
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private RoleRepository roleRepository;
+	
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -113,6 +121,11 @@ public class UserServiceImpl implements UserService {
 
 		// Convert DTO to entity
 		User user = modelMapper.map(userDto, User.class);
+
+		// fetch role of normal user and set it to user;
+		Role role=this.roleRepository.findById(normalRoleId).get();
+		user.getRoles().add(role);
+		
 		User savedUser = this.userRepository.save(user);
 
 		// Convert entity to DTO

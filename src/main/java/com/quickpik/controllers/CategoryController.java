@@ -3,6 +3,7 @@ package com.quickpik.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,11 +54,13 @@ public class CategoryController {
 			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = "brand", required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
-		PageableResponse<ProductDto> response = this.productService.getAllProductsByCategory(categoryId,pageNumber,pageSize,sortBy,sortDir);
+		PageableResponse<ProductDto> response = this.productService.getAllProductsByCategory(categoryId, pageNumber,
+				pageSize, sortBy, sortDir);
 		return new ResponseEntity<PageableResponse<ProductDto>>(response, HttpStatus.OK);
 	}
 
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
 		CategoryDto categoryResposne = this.categoryService.createCategory(categoryDto);
 		return new ResponseEntity<>(categoryResposne, HttpStatus.CREATED);
@@ -65,6 +68,7 @@ public class CategoryController {
 
 	// Create product with category
 	@PostMapping("/{categoryId}/products")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProductDto> createProductWithCategory(@Valid @RequestBody ProductDto productDto,
 			@PathVariable String categoryId) {
 		ProductDto productResponse = this.productService.createProductWithCategory(productDto, categoryId);
@@ -72,6 +76,7 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{categoryId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto,
 			@PathVariable("categoryId") String categoryId) {
 		CategoryDto updatedCategory = this.categoryService.updateCategory(categoryDto, categoryId);
@@ -79,6 +84,7 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{categoryId}/products/{productId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProductDto> updateCategoryOfProduct(@PathVariable String productId,
 			@PathVariable("categoryId") String categoryId) {
 		ProductDto updatedProduct = this.productService.updateProductCategory(categoryId, productId);
@@ -86,6 +92,7 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("/{categoryId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable("categoryId") String categoryId) {
 		this.categoryService.deleteCategory(categoryId);
 		ApiResponse response = ApiResponse.builder().message("Category deleted successfully")

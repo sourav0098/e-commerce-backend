@@ -39,8 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		// Check if "Authorization" header is available
 		String requestHeader = request.getHeader("Authorization");
-		logger.info("Request-Header: {}", requestHeader);
-
+		
 		String username = null;
 		String token = null;
 

@@ -1,6 +1,8 @@
 package com.quickpik.dtos;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import com.quickpik.validators.ImageNameValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +51,8 @@ public class UserDto {
 	// Custom validator annotation
 	@ImageNameValid
 	private String image;
+	
+	private Set<RoleDto> roles = new HashSet<>();
 
 	private Date createdAt;
 	private Date updatedAt;
