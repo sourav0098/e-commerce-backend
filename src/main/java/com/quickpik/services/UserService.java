@@ -2,9 +2,11 @@ package com.quickpik.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
+import com.quickpik.entities.User;
 
 public interface UserService {
 
@@ -29,4 +31,6 @@ public interface UserService {
 
 	// Delete a user along with profile image
 	void deleteUser(String userId) throws IOException;
+	
+	Optional<User> findUserByEmailOptional(String email);
 }

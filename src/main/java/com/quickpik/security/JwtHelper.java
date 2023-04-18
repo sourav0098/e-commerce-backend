@@ -14,12 +14,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtHelper {
 
-	// JWT Token Validity(ms): 5 hours
-	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-
 	// Secret Key
-	@Value("${jwt.secret}")
+	@Value("${application.security.jwt.secret-key}")
 	private String secret;
+
+	@Value("${application.security.jwt.expiration}")
+	private long JwtTokenValidity;
+
+	@Value("${application.security.jwt.refresh-token.expiration}")
+	private long refreshTokenValidity;
 
 	// retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
@@ -51,7 +54,11 @@ public class JwtHelper {
 	// generate token for user
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
-		return doGenerateToken(claims, userDetails.getUsername());
+		return doGenerateToken(claims, userDetails.getUsername(), JwtTokenValidity);
+	}
+
+	public String generateRefreshToken(UserDetails userDetails) {
+		return doGenerateToken(new HashMap<>(), userDetails.getUsername(), refreshTokenValidity);
 	}
 
 	// while creating the token -
@@ -61,10 +68,10 @@ public class JwtHelper {
 	// Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
 	// compaction of the JWT to a URL-safe string
 	@SuppressWarnings("deprecation")
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
+	private String doGenerateToken(Map<String, Object> claims, String subject, long expiration) {
 
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 

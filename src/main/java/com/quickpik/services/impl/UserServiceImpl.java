@@ -7,9 +7,9 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.entities.Role;
@@ -167,5 +166,10 @@ public class UserServiceImpl implements UserService {
 			ex.printStackTrace();
 		}
 		this.userRepository.deleteById(userId);
+	}
+
+	@Override
+	public Optional<User> findUserByEmailOptional(String email) {
+		return this.userRepository.findByEmail(email);
 	}
 }

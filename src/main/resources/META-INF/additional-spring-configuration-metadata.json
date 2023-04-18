@@ -1,0 +1,57 @@
+{"properties": [
+  {
+    "name": "user-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'user-image-path'"
+  },
+  {
+    "name": "category-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'category-image-path'"
+  },
+  {
+    "name": "product-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'product-image-path'"
+  },
+  {
+    "name": "role.admin.id",
+    "type": "java.lang.String",
+    "description": "A description for 'role.admin.id'"
+  },
+  {
+    "name": "role.normal.id",
+    "type": "java.lang.String",
+    "description": "A description for 'role.normal.id'"
+  },
+  {
+    "name": "googleClientId",
+    "type": "java.lang.String",
+    "description": "A description for 'googleClientId'"
+  },
+  {
+    "name": "googleSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'googleSecret'"
+  },
+  {
+    "name": "newPassword",
+    "type": "java.lang.String",
+    "description": "A description for 'newPassword'"
+  },
+  {
+    "name": "application.security.jwt.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'application.security.jwt.secret-key'"
+  },
+  {
+    "name": "application.security.jwt.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'application.security.jwt.expiration'"
+  },
+  {
+    "name": "application.security.jwt.refresh-token.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'application.security.jwt.refresh-token.expiration'"
+  }
+]}

@@ -51,6 +51,7 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors().disable().authorizeHttpRequests()
 				.requestMatchers("/auth/login").permitAll()
+				.requestMatchers("/auth/google").permitAll()
 				.requestMatchers(HttpMethod.POST, "/users").permitAll()
 				.requestMatchers(HttpMethod.DELETE,"/users/**").hasRole("ADMIN")
 				.anyRequest().authenticated().and()

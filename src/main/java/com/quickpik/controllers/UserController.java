@@ -145,10 +145,10 @@ public class UserController {
 
 		// retrieve the user's image from the specified resource location
 		InputStream resource = fileService.getResource(imageUploadPath, user.getImage());
-		
+
 		// set the response content type to image/jpeg
 		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		
+
 		// copy the image data to the response output stream
 		StreamUtils.copy(resource, response.getOutputStream());
 	}
