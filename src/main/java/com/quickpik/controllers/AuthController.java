@@ -14,10 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +30,7 @@ import com.quickpik.dtos.JwtResponseDto;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.entities.User;
 import com.quickpik.exception.BadApiRequestException;
+import com.quickpik.exception.UnauthorizedException;
 import com.quickpik.security.JwtHelper;
 import com.quickpik.services.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -74,7 +73,9 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtResponseDto> login(@RequestBody JwtRequestDto request) {
+		// call method to authenticate email and password
 		this.doAuthenticate(request.getEmail(), request.getPassword());
+
 		UserDetails userDetails = userDetailService.loadUserByUsername(request.getEmail());
 
 		// generate jwt token and refresh token
@@ -181,11 +182,13 @@ public class AuthController {
 	}
 
 	private void doAuthenticate(String email, String password) {
+		// check if email and password are correct
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
 		try {
 			this.manager.authenticate(authentication);
 		} catch (BadCredentialsException e) {
-			throw new BadApiRequestException("Invalid email or password!!");
+			// throw this exception if invalid email or password
+			throw new UnauthorizedException("Invalid email or password!");
 		}
 	}
 }

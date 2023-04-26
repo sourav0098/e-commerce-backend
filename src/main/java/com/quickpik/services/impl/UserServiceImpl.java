@@ -23,6 +23,7 @@ import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.entities.Role;
 import com.quickpik.entities.User;
+import com.quickpik.exception.ConstraintViolationException;
 import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.helper.Helper;
 import com.quickpik.repositories.RoleRepository;
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -111,6 +112,12 @@ public class UserServiceImpl implements UserService {
 	// Create a new User
 	@Override
 	public UserDto createUser(UserDto userDto) {
+		// Check if some other user is registered with that email
+		User emailExists = this.userRepository.findUserByEmailIgnoreCase(userDto.getEmail());
+		if (emailExists != null) {
+			throw new ConstraintViolationException("Email is already registered");
+		}
+
 		// Generate UUID
 		String userId = UUID.randomUUID().toString();
 		userDto.setUserId(userId);
@@ -122,9 +129,9 @@ public class UserServiceImpl implements UserService {
 		User user = modelMapper.map(userDto, User.class);
 
 		// fetch role of normal user and set it to user;
-		Role role=this.roleRepository.findById(normalRoleId).get();
+		Role role = this.roleRepository.findById(normalRoleId).get();
 		user.getRoles().add(role);
-		
+
 		User savedUser = this.userRepository.save(user);
 
 		// Convert entity to DTO

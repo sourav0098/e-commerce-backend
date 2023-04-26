@@ -59,4 +59,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ApiResponse response=ApiResponse.builder().message(message).status(HttpStatus.BAD_REQUEST.value()).timestamp(System.currentTimeMillis()).build();
 		return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ApiResponse> handleUnauthorizedRequest(UnauthorizedException ex){
+		String message=ex.getMessage();
+		ApiResponse response=ApiResponse.builder().message(message).status(HttpStatus.UNAUTHORIZED.value()).timestamp(System.currentTimeMillis()).build();
+		return new ResponseEntity<ApiResponse>(response,HttpStatus.UNAUTHORIZED);
+	}
 }

@@ -3,7 +3,8 @@ package com.quickpik.dtos;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import com.quickpik.validators.ImageNameValid;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -34,7 +35,10 @@ public class UserDto {
 	@NotBlank(message = "Please provide an email")
 	private String email;
 
+	@JsonIgnore
 	@NotBlank(message = "Please provide a password")
+	@Size(min = 8, message = "Password must be at least 8 characters")
+	@Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{8,15}$", message = "Password should contain atleast one uppercase, one lowercase, one number and one special character")
 	private String password;
 
 	@Size(min = 10, max = 10, message = "Please provide a valid 10 digit phone number")
@@ -51,9 +55,9 @@ public class UserDto {
 	private String province;
 
 	// Custom validator annotation
-	@ImageNameValid
+//	@ImageNameValid
 	private String image;
-	
+
 	private Set<RoleDto> roles = new HashSet<>();
 
 	private Date createdAt;

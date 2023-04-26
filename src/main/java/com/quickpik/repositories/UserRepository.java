@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, String>{
 	
 	// This method finds users whose first name contains the specified keyword
 	List<User> findByFnameContaining(String keyword);
+	
+	User findUserByEmailIgnoreCase(String email);
+    
 }
