@@ -13,7 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 	Page<Product> findByTitleContaining(String title, Pageable pageable);
 	
 	// Products which are live
-	Page<Product> findByIsLiveTrue(Pageable pageable);
+	Page<Product> findByLiveTrue(Pageable pageable);
 	
 	// Find By Category
 	Page<Product> findByCategory(Category category,Pageable pageable);

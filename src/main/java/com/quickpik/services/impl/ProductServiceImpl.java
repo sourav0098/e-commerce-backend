@@ -1,13 +1,6 @@
 package com.quickpik.services.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.ProductDto;
 import com.quickpik.entities.Category;
@@ -25,18 +17,23 @@ import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.helper.Helper;
 import com.quickpik.repositories.CategoryRepository;
 import com.quickpik.repositories.ProductRepository;
+import com.quickpik.services.ImageService;
 import com.quickpik.services.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-	@Value("${product-image-path}")
-	private String imagePath;
+
+	@Value("${aws.s3.products-image-path}")
+	private String productImageUploadPath;
 
 	@Autowired
 	private ProductRepository productRepository;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private ImageService imageService;
 
 	@Autowired
 	private ModelMapper modelMappper;
@@ -73,19 +70,20 @@ public class ProductServiceImpl implements ProductService {
 		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
 				: (Sort.by(sortBy).descending());
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-		Page<Product> page = this.productRepository.findByIsLiveTrue(pageable);
+		Page<Product> page = this.productRepository.findByLiveTrue(pageable);
 		return Helper.getPageableResponse(page, ProductDto.class);
 	}
-	
+
 	@Override
-	public PageableResponse<ProductDto> getAllProductsByCategory(String categoryId,int pageNumber, int pageSize, String sortBy, String sortDir) {
+	public PageableResponse<ProductDto> getAllProductsByCategory(String categoryId, int pageNumber, int pageSize,
+			String sortBy, String sortDir) {
 		// fetch category
 		Category category = this.categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new ResourceNotFoundException("No category found"));
 		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
 				: (Sort.by(sortBy).descending());
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-		Page<Product> page = this.productRepository.findByCategory(category,pageable);
+		Page<Product> page = this.productRepository.findByCategory(category, pageable);
 		return Helper.getPageableResponse(page, ProductDto.class);
 	}
 
@@ -102,9 +100,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public ProductDto updateProduct(ProductDto productDto, String productId) {
-		this.productRepository.findById(productId)
+		Product product = this.productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("No product found!"));
-		Product product = modelMappper.map(productDto, Product.class);
 		product.setProductId(productId);
 		product.setBrand(productDto.getBrand());
 		product.setTitle(productDto.getTitle());
@@ -124,16 +121,9 @@ public class ProductServiceImpl implements ProductService {
 	public void deleteProduct(String productId) {
 		Product product = this.productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("No product found!"));
+
 		// delete product image
-		String fullPath = imagePath + File.separator + product.getProductImage();
-		try {
-			Path path = Paths.get(fullPath);
-			Files.delete(path);
-		} catch (NoSuchFileException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		this.imageService.deleteImage(product.getProductImage());
 		this.productRepository.deleteById(productId);
 	}
 

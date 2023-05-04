@@ -1,16 +1,10 @@
 package com.quickpik.controllers;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.payload.ApiResponse;
-import com.quickpik.services.FileService;
+import com.quickpik.services.ImageService;
 import com.quickpik.services.UserService;
-
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 // The UserController class provides REST endpoints for user-related operations 
@@ -35,14 +27,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
-	@Value("${user-image-path}")
-	private String imageUploadPath;
+	@Value("${aws.s3.user-image-path}")
+	private String userImageUploadPath;
 
 	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private FileService fileService;
+	private ImageService imageService;
 
 	// Get a paginated list of all users, sorted and filtered according to given
 	// parameters.
@@ -86,26 +78,10 @@ public class UserController {
 
 	// Update user
 	@PutMapping("/{userId}")
-	public ResponseEntity<UserDto> updateUser(@Valid @PathVariable("userId") String userId,
-			@RequestBody UserDto userDto) {
+	public ResponseEntity<UserDto> updateUser(@PathVariable("userId") String userId,
+			@Valid @RequestBody UserDto userDto) {
 		UserDto user = this.userService.updateUser(userDto, userId);
 		return new ResponseEntity<>(user, HttpStatus.OK);
-	}
-
-	// Delete user
-	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") String userId) throws IOException {
-		UserDto user = userService.getUserById(userId);
-		if (user == null) {
-			ApiResponse response = ApiResponse.builder().message("User not found").status(HttpStatus.NOT_FOUND.value())
-					.timestamp(System.currentTimeMillis()).build();
-			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-		} else {
-			this.userService.deleteUser(userId);
-			ApiResponse response = ApiResponse.builder().message("User deleted successfully")
-					.status(HttpStatus.OK.value()).timestamp(System.currentTimeMillis()).build();
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
 	}
 
 	// Upload user image
@@ -116,7 +92,7 @@ public class UserController {
 		try {
 
 			// upload image and returns image name
-			imageName = this.fileService.uploadImage(image, imageUploadPath);
+			imageName = this.imageService.uploadImage(image, userImageUploadPath);
 
 			// get user by id and set the image name for the user
 			UserDto userDto = this.userService.getUserById(userId);
@@ -138,19 +114,12 @@ public class UserController {
 
 	// Serve images
 	@GetMapping("/image/{userId}")
-	public void serveUserImage(@PathVariable String userId, HttpServletResponse response) throws IOException {
-
+	public ResponseEntity<ApiResponse> serveUserImage(@PathVariable String userId) throws IOException {
 		// get the user by user id
 		UserDto user = this.userService.getUserById(userId);
-
-		// retrieve the user's image from the specified resource location
-		InputStream resource = fileService.getResource(imageUploadPath, user.getImage());
-
-		// set the response content type to image/jpeg
-		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-
-		// copy the image data to the response output stream
-		StreamUtils.copy(resource, response.getOutputStream());
+		String imageName = this.imageService.getImageUrl(user.getImage(), userImageUploadPath);
+		ApiResponse apiResponse = ApiResponse.builder().message(imageName).status(HttpStatus.OK.value())
+				.timestamp(System.currentTimeMillis()).build();
+		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.OK);
 	}
-
 }

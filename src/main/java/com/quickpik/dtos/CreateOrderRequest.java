@@ -19,11 +19,11 @@ public class CreateOrderRequest {
 	private String orderStatus;
 	private String paymentStatus;
 
-	@NotBlank(message="Please provide a billing name")
-	private String billingName;
+	@NotBlank(message="Please provide a shipping name")
+	private String shippingName;
 
 	@NotBlank(message="Please provide a valid address")
-	private String orderAddress;
+	private String shippingAddress;
 
 	@NotBlank(message="Please provide a postal code")
 	@Pattern(regexp = "^(?!.*[DFIOQUdfioqu])[A-VXYa-vxy][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$", message = "Please enter valid zip code")
@@ -35,7 +35,7 @@ public class CreateOrderRequest {
 	@NotBlank(message="Please provide a province")
 	private String province;
 
-	@NotBlank(message="Please provide a billing phone number")
+	@NotBlank(message="Please provide a shipping phone number")
 	@Size(min = 10, max = 10, message = "Please provide a valid 10 digit phone number")
-	private String billingPhone;
+	private String shippingPhone;
 }

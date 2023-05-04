@@ -1,11 +1,5 @@
 package com.quickpik.services.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,10 +31,6 @@ import com.quickpik.services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-	@Value("${user-image-path}")
-	private String imagePath;
-
 	@Value("${role.normal.id}")
 	private String normalRoleId;
 
@@ -141,38 +131,34 @@ public class UserServiceImpl implements UserService {
 	// Update a user
 	@Override
 	public UserDto updateUser(UserDto userDto, String userId) {
+
+		// we will not update email and image through this method
 		User user = this.userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 		user.setFname(userDto.getFname());
 		user.setLname(userDto.getLname());
-		user.setPassword(userDto.getPassword());
+
+		// update and encrypt password only when it is not null or it is different from
+		// previous password
+		if (userDto.getPassword() != null) {
+			if (!userDto.getPassword().equalsIgnoreCase(user.getPassword())) {
+				user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+			}
+		}
+
 		user.setAddress(userDto.getAddress());
 		user.setCity(userDto.getCity());
 		user.setProvince(userDto.getProvince());
 		user.setPostalCode(userDto.getPostalCode());
 		user.setPhone(userDto.getPhone());
-		user.setImage(userDto.getImage());
+
+		if (userDto.getImage() != null) {
+			user.setImage(userDto.getImage());
+		}
+
 		User savedUser = this.userRepository.save(user);
 
 		return modelMapper.map(savedUser, UserDto.class);
-	}
-
-	// Delete a user
-	@Override
-	public void deleteUser(String userId) throws IOException {
-		User user = this.userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
-		// delete profile image
-		String fullPath = imagePath + File.separator + user.getImage();
-		try {
-			Path path = Paths.get(fullPath);
-			Files.delete(path);
-		} catch (NoSuchFileException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		this.userRepository.deleteById(userId);
 	}
 
 	@Override

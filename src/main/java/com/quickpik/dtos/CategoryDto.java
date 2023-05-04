@@ -19,7 +19,7 @@ public class CategoryDto {
 	private String categoryId;
 
 	@NotBlank(message = "Please provide a valid title")
-	@Length(min = 3, message = "Please add minimum of 3 characters in title")
+	@Length(min = 2, message = "Please add minimum of 2 characters in title")
 	private String categoryTitle;
 
 	@NotBlank(message = "Please provide a valid description")

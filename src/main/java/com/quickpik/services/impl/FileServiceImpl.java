@@ -23,15 +23,14 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public InputStream getResource(String path, String name) throws FileNotFoundException {
-		String fullPath=path+File.separator+name;
-		InputStream inputStream=new FileInputStream(fullPath);
+		String fullPath = path + File.separator + name;
+		InputStream inputStream = new FileInputStream(fullPath);
 		return inputStream;
 	}
 
 	@Override
 	public String uploadImage(MultipartFile file, String path) throws IOException {
 		String originalFileName = file.getOriginalFilename();
-		log.info("Filename {}", originalFileName);
 
 		String fileName = UUID.randomUUID().toString();
 		String extension = originalFileName.substring(originalFileName.lastIndexOf("."));

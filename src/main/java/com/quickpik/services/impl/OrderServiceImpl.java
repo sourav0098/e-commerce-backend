@@ -89,9 +89,9 @@ public class OrderServiceImpl implements OrderService {
 		AtomicReference<Double> totalOrderAmount = new AtomicReference<Double>((double) 0);
 
 		Order order = Order.builder().orderId(orderId).orderNumber(orderNumber)
-				.billingName(orderRequest.getBillingName()).billingPhone(orderRequest.getBillingPhone())
+				.shippingName(orderRequest.getShippingName()).shippingPhone(orderRequest.getShippingPhone())
 				.orderStatus(orderRequest.getOrderStatus()).paymentStatus(orderRequest.getPaymentStatus())
-				.orderAddress(orderRequest.getOrderAddress()).city(orderRequest.getCity())
+				.shippingAddress(orderRequest.getShippingAddress()).city(orderRequest.getCity())
 				.province(orderRequest.getProvince()).postalCode(orderRequest.getPostalCode()).user(user).build();
 
 		// order items, amount to be set
@@ -134,8 +134,8 @@ public class OrderServiceImpl implements OrderService {
 
 		order.setOrderStatus(orderRequest.getOrderStatus());
 		order.setPaymentStatus(orderRequest.getPaymentStatus());
-		order.setBillingName(orderRequest.getBillingName());
-		order.setOrderAddress(orderRequest.getOrderAddress());
+		order.setShippingName(orderRequest.getShippingName());
+		order.setShippingAddress(orderRequest.getShippingAddress());
 		order.setCity(orderRequest.getCity());
 		order.setProvince(orderRequest.getProvince());
 		order.setPostalCode(orderRequest.getPostalCode());

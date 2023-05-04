@@ -53,5 +53,60 @@
     "name": "application.security.jwt.refresh-token.expiration",
     "type": "java.lang.String",
     "description": "A description for 'application.security.jwt.refresh-token.expiration'"
+  },
+  {
+    "name": "aws.access-key",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.access-key'"
+  },
+  {
+    "name": "aws.access-key-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.access-key-secret'"
+  },
+  {
+    "name": "aws.bucket-name",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.bucket-name'"
+  },
+  {
+    "name": "aws.region",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.region'"
+  },
+  {
+    "name": "aws.s3.access-key",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.access-key'"
+  },
+  {
+    "name": "aws.s3.secretKey",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.secretKey'"
+  },
+  {
+    "name": "aws.s3.bucketName",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.bucketName'"
+  },
+  {
+    "name": "aws.s3.region",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.region'"
+  },
+  {
+    "name": "aws.s3.user-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.user-image-path'"
+  },
+  {
+    "name": "aws.s3.products-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.products-image-path'"
+  },
+  {
+    "name": "aws.s3.categories-image-path",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.s3.categories-image-path'"
   }
 ]}

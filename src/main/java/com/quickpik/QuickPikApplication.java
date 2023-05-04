@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
 import com.quickpik.entities.Role;
 import com.quickpik.repositories.RoleRepository;
 
@@ -16,7 +15,7 @@ public class QuickPikApplication implements CommandLineRunner {
 
 	@Autowired
 	private RoleRepository roleRepository;
-
+	
 	@Value("${role.admin.id}")
 	private String roleAdminId;
 

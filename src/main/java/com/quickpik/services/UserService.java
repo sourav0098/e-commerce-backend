@@ -1,6 +1,6 @@
 package com.quickpik.services;
 
-import java.io.IOException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +29,5 @@ public interface UserService {
 	// Update a user
 	UserDto updateUser(UserDto userDto, String userId);
 
-	// Delete a user along with profile image
-	void deleteUser(String userId) throws IOException;
-	
 	Optional<User> findUserByEmailOptional(String email);
 }

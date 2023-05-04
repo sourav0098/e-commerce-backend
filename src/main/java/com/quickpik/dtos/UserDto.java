@@ -3,10 +3,9 @@ package com.quickpik.dtos;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -35,8 +34,6 @@ public class UserDto {
 	@NotBlank(message = "Please provide an email")
 	private String email;
 
-	@JsonIgnore
-	@NotBlank(message = "Please provide a password")
 	@Size(min = 8, message = "Password must be at least 8 characters")
 	@Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{8,15}$", message = "Password should contain atleast one uppercase, one lowercase, one number and one special character")
 	private String password;
@@ -46,7 +43,8 @@ public class UserDto {
 
 	private String address;
 
-	@Pattern(regexp = "^(?!.*[DFIOQUdfioqu])[A-VXYa-vxy][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]$", message = "Please enter valid zip code")
+
+	@Pattern(regexp = "^(?!.*[DFIOQUdfioqu])[A-VXYa-vxy][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]?|\\s*$", message = "Please enter a valid postal code")
 	private String postalCode;
 
 	@Size(max = 150, message = "City name cant be longer than 150 characters")

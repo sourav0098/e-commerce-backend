@@ -46,10 +46,10 @@ public class Order {
 	private double orderAmount;
 
 	@Column(nullable = false)
-	private String billingName;
+	private String shippingName;
 
 	@Column(nullable = false)
-	private String orderAddress;
+	private String shippingAddress;
 
 	@Column(length = 6, nullable = false)
 	private String postalCode;
@@ -61,7 +61,7 @@ public class Order {
 	private String province;
 
 	@Column(length=10,nullable = false)
-	private String billingPhone;
+	private String shippingPhone;
 
 	@Column(nullable = true)
 	private Date deliveredDate;

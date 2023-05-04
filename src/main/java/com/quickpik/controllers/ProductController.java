@@ -1,15 +1,11 @@
 package com.quickpik.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,28 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.ProductDto;
 import com.quickpik.payload.ApiResponse;
-import com.quickpik.services.FileService;
+import com.quickpik.services.ImageService;
 import com.quickpik.services.ProductService;
-
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-	@Value("${product-image-path}")
-	private String imageUploadPath;
+	@Value("${aws.s3.products-image-path}")
+	private String productImageUploadPath;
 
 	@Autowired
 	private ProductService productService;
 
 	@Autowired
-	private FileService fileService;
+	private ImageService imageService;
 
 	// get single
 	@GetMapping("/{productId}")
@@ -117,10 +110,10 @@ public class ProductController {
 	@PostMapping("/image/{productId}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable String productId,
-			@RequestParam("product-image") MultipartFile productImage) {
+			@RequestParam("productImage") MultipartFile productImage) {
 
 		try {
-			String imageName = this.fileService.uploadImage(productImage, imageUploadPath);
+			String imageName = this.imageService.uploadImage(productImage, productImageUploadPath);
 			ProductDto productDto = this.productService.getProductById(productId);
 			productDto.setProductImage(imageName);
 			this.productService.updateProduct(productDto, productId);
@@ -138,10 +131,12 @@ public class ProductController {
 
 	// serve image
 	@GetMapping("/image/{productId}")
-	public void serveProductImage(@PathVariable String productId, HttpServletResponse response) throws IOException {
+	public ResponseEntity<ApiResponse> serveProductImage(@PathVariable String productId) throws IOException {
+		// get the product by product id
 		ProductDto productDto = this.productService.getProductById(productId);
-		InputStream resource = fileService.getResource(imageUploadPath, productDto.getProductImage());
-		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		StreamUtils.copy(resource, response.getOutputStream());
+		String imageName = this.imageService.getImageUrl(productDto.getProductImage(), productImageUploadPath);
+		ApiResponse apiResponse = ApiResponse.builder().message(imageName).status(HttpStatus.OK.value())
+				.timestamp(System.currentTimeMillis()).build();
+		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.OK);
 	}
 }

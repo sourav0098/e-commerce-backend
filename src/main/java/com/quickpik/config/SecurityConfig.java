@@ -31,14 +31,10 @@ import com.quickpik.security.JwtAuthenticationFilter;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-	
-	private final String[] PUBLIC_URLS= {
-		"/swagger-ui/**",
-		"/webjars/**",
-		"/swagger-resources/**",
-		"/v3/api-docs/**"
-	};
-	
+
+	private final String[] PUBLIC_URLS = { "/swagger-ui/**", "/webjars/**", "/swagger-resources/**",
+			"/v3/api-docs/**" };
+
 	/**
 	 * UserDetailsService instance to be used by the authentication provider.
 	 */
@@ -51,19 +47,15 @@ public class SecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter authenticationFilter;
 
-
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-		.csrf().disable()
-		.authorizeHttpRequests()
-		.requestMatchers(PUBLIC_URLS).permitAll()
-		.requestMatchers("/auth/login").permitAll()
-		.requestMatchers("/auth/google").permitAll().requestMatchers(HttpMethod.POST, "/users").permitAll()
-		.requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-		.anyRequest().authenticated().and()
-		.exceptionHandling().authenticationEntryPoint(autenticationEntryPoint).and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.csrf().disable().authorizeHttpRequests().requestMatchers(PUBLIC_URLS).permitAll()
+				.requestMatchers("/auth/login").permitAll().requestMatchers("/auth/google").permitAll()
+				.requestMatchers(HttpMethod.POST, "/users").permitAll()
+				.requestMatchers(HttpMethod.GET).permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN").anyRequest().authenticated().and()
+				.exceptionHandling().authenticationEntryPoint(autenticationEntryPoint).and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -112,6 +104,7 @@ public class SecurityConfig {
 		configuration.addAllowedMethod("GET");
 		configuration.addAllowedMethod("POST");
 		configuration.addAllowedMethod("PUT");
+		configuration.addAllowedMethod("DELETE");
 		configuration.addAllowedMethod("OPTIONS");
 		configuration.setMaxAge(3600L);
 

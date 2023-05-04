@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// If the header is present, the code checks if token starts with the string
 		// "Bearer". The code extracts the token from the header by removing the first
 		// seven characters, which correspond to the "Bearer " prefix.
-		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+		if (requestHeader != null && requestHeader.trim().startsWith("Bearer")) {
 			token = requestHeader.substring(7);
 			try {
 				// get username from token
@@ -62,10 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				logger.info("Invalid token! Some changes has done in token");
 				ex.printStackTrace();
 			}
-		} else {
-			logger.info("Invalid token");
 		}
-
+		
 		// Check if username is not null and there is no authentication object inside
 		// security context
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

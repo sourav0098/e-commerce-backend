@@ -50,10 +50,10 @@ public class Product {
 	private String productImage;
 
 	@Column(nullable = false)
-	private boolean isLive;
+	private boolean live;
 
 	@Column( nullable = false)
-	private boolean isStock;
+	private boolean stock;
 
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)

@@ -22,7 +22,7 @@ public class ProductDto {
 	@NotBlank(message = "Please provide a valid brand name")
 	private String brand;
 
-	@NotBlank(message = "Please provide a valid title")
+	@NotBlank(message = "Please provide a valid product name")
 	private String title;
 
 	@NotBlank(message = "Please provide a valid descripiton")
@@ -41,8 +41,8 @@ public class ProductDto {
 	private int quantity;
 
 	private String productImage;
-	private boolean isLive;
-	private boolean isStock;
+	private boolean live;
+	private boolean stock;
 	private Date createdAt;
 	private Date updatedAt;
 }
