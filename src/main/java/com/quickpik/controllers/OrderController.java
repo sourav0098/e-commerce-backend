@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.quickpik.dtos.CreateOrderRequest;
 import com.quickpik.dtos.OrderDto;
 import com.quickpik.dtos.PageableResponse;
+import com.quickpik.dtos.UpdateOrderRequest;
 import com.quickpik.payload.ApiResponse;
 import com.quickpik.services.OrderService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/orders")
@@ -28,9 +32,18 @@ public class OrderController {
 
 	// create order
 	@PostMapping()
-	public ResponseEntity<OrderDto> createOrder(@RequestBody CreateOrderRequest request) {
+	public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody CreateOrderRequest request) {
 		OrderDto orderDto = this.orderService.createOrder(request);
 		return new ResponseEntity<OrderDto>(orderDto, HttpStatus.CREATED);
+	}
+
+	// update order
+	@PutMapping("/{orderId}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<OrderDto> updateOrder(@PathVariable String orderId,@Valid @RequestBody UpdateOrderRequest request) {
+		System.out.println(request.getDeliveredDate());
+		OrderDto orderDto = this.orderService.updateOrder(orderId, request);
+		return new ResponseEntity<OrderDto>(orderDto, HttpStatus.OK);
 	}
 
 	// remove order

@@ -1,10 +1,12 @@
 package com.quickpik.entities;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,14 +41,14 @@ public class Order {
 	private String orderStatus;
 
 	// NOT-PAID, PAID
-	@Column(nullable = false, columnDefinition = "varchar(10) default 'NOT-PAID'")	
+	@Column(nullable = false, columnDefinition = "varchar(10) default 'NOT PAID'")	
 	private String paymentStatus;
 
 	@Column(nullable = false)
 	private double orderAmount;
 
 	@Column(nullable = false)
-	private String shippingName;
+	private String orderName;
 
 	@Column(nullable = false)
 	private String shippingAddress;
@@ -64,7 +66,8 @@ public class Order {
 	private String shippingPhone;
 
 	@Column(nullable = true)
-	private Date deliveredDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate deliveredDate;
 
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)

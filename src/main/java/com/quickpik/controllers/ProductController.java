@@ -110,7 +110,7 @@ public class ProductController {
 	@PostMapping("/image/{productId}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable String productId,
-			@RequestParam("productImage") MultipartFile productImage) {
+			@RequestParam("image") MultipartFile productImage) {
 
 		try {
 			String imageName = this.imageService.uploadImage(productImage, productImageUploadPath);

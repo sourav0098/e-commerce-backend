@@ -29,7 +29,6 @@ import com.quickpik.dtos.JwtRequestDto;
 import com.quickpik.dtos.JwtResponseDto;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.entities.User;
-import com.quickpik.exception.BadApiRequestException;
 import com.quickpik.exception.UnauthorizedException;
 import com.quickpik.security.JwtHelper;
 import com.quickpik.services.UserService;

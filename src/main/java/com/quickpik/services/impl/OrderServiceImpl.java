@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
 		AtomicReference<Double> totalOrderAmount = new AtomicReference<Double>((double) 0);
 
 		Order order = Order.builder().orderId(orderId).orderNumber(orderNumber)
-				.shippingName(orderRequest.getShippingName()).shippingPhone(orderRequest.getShippingPhone())
+				.orderName(orderRequest.getOrderName()).shippingPhone(orderRequest.getShippingPhone())
 				.orderStatus(orderRequest.getOrderStatus()).paymentStatus(orderRequest.getPaymentStatus())
 				.shippingAddress(orderRequest.getShippingAddress()).city(orderRequest.getCity())
 				.province(orderRequest.getProvince()).postalCode(orderRequest.getPostalCode()).user(user).build();
@@ -131,10 +131,10 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDto updateOrder(String orderId, UpdateOrderRequest orderRequest) {
 		Order order = this.orderRepository.findById(orderId)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
 		order.setOrderStatus(orderRequest.getOrderStatus());
 		order.setPaymentStatus(orderRequest.getPaymentStatus());
-		order.setShippingName(orderRequest.getShippingName());
+		order.setOrderName(orderRequest.getOrderName());
+		order.setShippingPhone(orderRequest.getShippingPhone());
 		order.setShippingAddress(orderRequest.getShippingAddress());
 		order.setCity(orderRequest.getCity());
 		order.setProvince(orderRequest.getProvince());

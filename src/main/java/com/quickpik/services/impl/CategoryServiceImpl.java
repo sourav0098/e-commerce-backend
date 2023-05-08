@@ -46,7 +46,10 @@ public class CategoryServiceImpl implements CategoryService {
 		// update category object details to categoryDto
 		category.setCategoryTitle(categoryDto.getCategoryTitle());
 		category.setDescription(categoryDto.getDescription());
-		category.setCategoryImage(categoryDto.getCategoryImage());
+
+		if (categoryDto.getCategoryImage() != null) {
+			category.setCategoryImage(categoryDto.getCategoryImage());
+		}
 
 		Category updatedCategory = this.categoryRepository.save(category);
 		return modelMapper.map(updatedCategory, CategoryDto.class);

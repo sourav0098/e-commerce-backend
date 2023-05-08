@@ -113,7 +113,7 @@ public class CategoryController {
 
 	// Upload category image
 	@PostMapping("/image/{categoryId}")
-	public ResponseEntity<ApiResponse> uploadCategoryImage(@PathVariable("category") String categoryId,
+	public ResponseEntity<ApiResponse> uploadCategoryImage(@PathVariable("categoryId") String categoryId,
 			@RequestParam("image") MultipartFile image) {
 		String imageName;
 		try {

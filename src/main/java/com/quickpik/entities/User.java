@@ -37,6 +37,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	private String userId;
 

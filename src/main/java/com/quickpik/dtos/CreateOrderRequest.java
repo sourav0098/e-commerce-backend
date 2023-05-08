@@ -19,8 +19,8 @@ public class CreateOrderRequest {
 	private String orderStatus;
 	private String paymentStatus;
 
-	@NotBlank(message="Please provide a shipping name")
-	private String shippingName;
+	@NotBlank(message="Please provide a order name")
+	private String orderName;
 
 	@NotBlank(message="Please provide a valid address")
 	private String shippingAddress;
