@@ -1,7 +1,5 @@
 package com.quickpik.services;
 
-
-import java.util.List;
 import java.util.Optional;
 
 import com.quickpik.dtos.PageableResponse;
@@ -21,7 +19,8 @@ public interface UserService {
 	PageableResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
 
 	// Searches for users with the specified keyword, returning a list of user DTOs
-	List<UserDto> searchUser(String keyword);
+	PageableResponse<UserDto> searchUser(String keyword, int pageNumber, int pageSize, String sortBy,
+			String sortDir);
 
 	// Create a new user
 	UserDto createUser(UserDto userDto);

@@ -1,6 +1,8 @@
 package com.quickpik.controllers;
 import java.io.IOException;
-import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -14,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
 import com.quickpik.payload.ApiResponse;
 import com.quickpik.services.ImageService;
 import com.quickpik.services.UserService;
-import jakarta.validation.Valid;
 
 // The UserController class provides REST endpoints for user-related operations 
 @RestController
@@ -64,9 +64,15 @@ public class UserController {
 	}
 
 //	Get a user by keyword matching the fname
-	@GetMapping("/search/{keyword}")
-	public ResponseEntity<List<UserDto>> searchUser(@PathVariable String keyword) {
-		return new ResponseEntity<List<UserDto>>(this.userService.searchUser(keyword), HttpStatus.OK);
+	@GetMapping("/search/{fname}")
+	public ResponseEntity<PageableResponse<UserDto>> searchUser(@PathVariable String fname,
+			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+			@RequestParam(value = "sortBy", defaultValue = "fname", required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
+		PageableResponse<UserDto> response = this.userService.searchUser(fname, pageNumber, pageSize,
+				sortBy, sortDir);
+		return new ResponseEntity<PageableResponse<UserDto>>(response, HttpStatus.OK);
 	}
 
 // Create new user

@@ -1,6 +1,9 @@
 package com.quickpik.controllers;
 
 import java.io.IOException;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,7 +27,6 @@ import com.quickpik.services.CategoryService;
 import com.quickpik.services.ImageService;
 import com.quickpik.services.ProductService;
 
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/categories")

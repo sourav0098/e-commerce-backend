@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
 		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
 				: (Sort.by(sortBy).descending());
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-		Page<Product> page = this.productRepository.findByCategory(category, pageable);
+		Page<Product> page = this.productRepository.findByCategoryAndLiveTrue(category, pageable);
 		return Helper.getPageableResponse(page, ProductDto.class);
 	}
 
@@ -105,6 +105,7 @@ public class ProductServiceImpl implements ProductService {
 		product.setProductId(productId);
 		product.setBrand(productDto.getBrand());
 		product.setTitle(productDto.getTitle());
+		product.setShortDescription(productDto.getShortDescription());
 		product.setDescription(productDto.getDescription());
 		product.setUnitPrice(productDto.getUnitPrice());
 		product.setDiscountedPrice(productDto.getDiscountedPrice());

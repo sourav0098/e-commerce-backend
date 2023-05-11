@@ -15,8 +15,8 @@ import lombok.Setter;
 
 public class CartDto {
 	private String cartId;
-	private String userId;
-
+	private UserDto user;
+	
 	private List<CartItemDto> items = new ArrayList<>();
 
 	private Date createdAt;

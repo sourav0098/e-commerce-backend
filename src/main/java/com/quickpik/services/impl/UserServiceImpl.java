@@ -1,9 +1,7 @@
 package com.quickpik.services.impl;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,11 +90,13 @@ public class UserServiceImpl implements UserService {
 	// Search for users in the database whose first name contains the specified
 	// keyword.
 	@Override
-	public List<UserDto> searchUser(String keyword) {
-		List<User> users = this.userRepository.findByFnameContaining(keyword);
-		List<UserDto> usersDto = users.stream().map(user -> modelMapper.map(user, UserDto.class))
-				.collect(Collectors.toList());
-		return usersDto;
+	public PageableResponse<UserDto> searchUser(String keyword, int pageNumber, int pageSize, String sortBy,
+			String sortDir) {
+		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
+				: (Sort.by(sortBy).descending());
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		Page<User> page = this.userRepository.findByFnameContaining(keyword, pageable);
+		return Helper.getPageableResponse(page, UserDto.class);
 	}
 
 	// Create a new User

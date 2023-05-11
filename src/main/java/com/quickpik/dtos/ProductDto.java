@@ -1,9 +1,10 @@
 package com.quickpik.dtos;
 
 import java.util.Date;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,13 +20,18 @@ public class ProductDto {
 	private String productId;
 	private CategoryDto category;
 
-	@NotBlank(message = "Please provide a valid brand name")
+	@NotBlank(message = "Please provide a brand name")
 	private String brand;
 
-	@NotBlank(message = "Please provide a valid product name")
+	@NotBlank(message = "Please provide a product name")
+	@Size(max = 255, message = "Product Name must be less than 255 characters")
 	private String title;
+	
+	@NotBlank(message = "Please provide a short descripiton")
+	@Size(max = 200, message = "Short description must be less than 200 characters")
+	private String shortDescription;
 
-	@NotBlank(message = "Please provide a valid descripiton")
+	@NotBlank(message = "Please provide a descripiton")
 	private String description;
 
 	@Min(value = 0, message = "Unit Price must be greater than 0")

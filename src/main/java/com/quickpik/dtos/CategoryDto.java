@@ -1,9 +1,11 @@
 package com.quickpik.dtos;
 
 import java.util.Date;
+
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+
 import org.hibernate.validator.constraints.Length;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -15,6 +15,7 @@ import com.quickpik.entities.Cart;
 import com.quickpik.entities.CartItem;
 import com.quickpik.entities.Product;
 import com.quickpik.entities.User;
+import com.quickpik.exception.BadApiRequestException;
 import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.repositories.CartItemRepository;
 import com.quickpik.repositories.CartRepository;
@@ -53,6 +54,10 @@ public class CartServiceImpl implements CartService {
 		int quantity = request.getQuantity();
 		String productId = request.getProductId();
 
+		if (quantity <= 0) {
+            throw new BadApiRequestException("Quantity should not be less than 1");
+        }
+		
 		// fetch product
 		Product product = this.productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("No product found"));
@@ -101,8 +106,8 @@ public class CartServiceImpl implements CartService {
 					.product(product).cart(cart).build();
 
 			cart.getItems().add(cartItem);
-			cart.setUser(user);
 		}
+		cart.setUser(user);
 
 		// Update the cart in database
 		Cart updatedCart = cartRepository.save(cart);

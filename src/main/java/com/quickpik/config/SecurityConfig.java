@@ -49,11 +49,11 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests().requestMatchers(PUBLIC_URLS).permitAll()
-				.requestMatchers("/auth/login").permitAll().requestMatchers("/auth/google").permitAll()
-				.requestMatchers(HttpMethod.POST, "/users").permitAll()
-				.requestMatchers(HttpMethod.GET).permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN").anyRequest().authenticated().and()
+		http.csrf().disable().authorizeHttpRequests().antMatchers(PUBLIC_URLS).permitAll()
+				.antMatchers("/auth/login").permitAll().antMatchers("/auth/google").permitAll()
+				.antMatchers(HttpMethod.POST, "/users").permitAll()
+				.antMatchers(HttpMethod.GET).permitAll()
+				.antMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN").anyRequest().authenticated().and()
 				.exceptionHandling().authenticationEntryPoint(autenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

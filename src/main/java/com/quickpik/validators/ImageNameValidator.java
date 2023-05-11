@@ -1,7 +1,7 @@
 package com.quickpik.validators;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class ImageNameValidator implements ConstraintValidator<ImageNameValid, String> {
 

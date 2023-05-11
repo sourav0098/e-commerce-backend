@@ -5,13 +5,13 @@ import java.util.Date;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +35,9 @@ public class Product {
 	@Column(nullable = false)
 	private String title;
 
+	@Column(length = 150, nullable = false)
+	private String shortDescription;
+
 	@Column(length = 10000, nullable = false)
 	private String description;
 
@@ -46,13 +49,13 @@ public class Product {
 
 	@Column(nullable = false)
 	private int quantity;
-	
+
 	private String productImage;
 
 	@Column(nullable = false)
 	private boolean live;
 
-	@Column( nullable = false)
+	@Column(nullable = false)
 	private boolean stock;
 
 	@CreationTimestamp
@@ -62,8 +65,8 @@ public class Product {
 	@UpdateTimestamp
 	@Column(nullable = false)
 	private Date updatedAt;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="categoryId")
+	@JoinColumn(name = "categoryId")
 	private Category category;
 }

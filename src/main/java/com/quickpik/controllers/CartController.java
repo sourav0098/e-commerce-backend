@@ -1,5 +1,7 @@
 package com.quickpik.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,6 @@ import com.quickpik.dtos.CartDto;
 import com.quickpik.payload.ApiResponse;
 import com.quickpik.services.CartService;
 
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/carts")
@@ -25,7 +26,7 @@ public class CartController {
 	private CartService cartService;
 
 	// get cart for a user
-	@GetMapping("/{userId}")
+	@GetMapping("/user/{userId}")
 	public ResponseEntity<CartDto> getCartForUser(@PathVariable String userId) {
 		CartDto cartDto = this.cartService.getCartByUser(userId);
 		return new ResponseEntity<CartDto>(cartDto, HttpStatus.OK);
