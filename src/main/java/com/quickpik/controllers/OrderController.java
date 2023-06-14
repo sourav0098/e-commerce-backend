@@ -41,7 +41,8 @@ public class OrderController {
 	// update order
 	@PutMapping("/{orderId}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<OrderDto> updateOrder(@PathVariable String orderId,@Valid @RequestBody UpdateOrderRequest request) {
+	public ResponseEntity<OrderDto> updateOrder(@PathVariable String orderId,
+			@Valid @RequestBody UpdateOrderRequest request) {
 		System.out.println(request.getDeliveredDate());
 		OrderDto orderDto = this.orderService.updateOrder(orderId, request);
 		return new ResponseEntity<OrderDto>(orderDto, HttpStatus.OK);
@@ -68,6 +69,13 @@ public class OrderController {
 
 		PageableResponse<OrderDto> orders = this.orderService.getAllOrders(pageNumber, pageSize, sortBy, sortDir);
 		return new ResponseEntity<PageableResponse<OrderDto>>(orders, HttpStatus.OK);
+	}
+
+	// get order by order id
+	@GetMapping("/{orderId}")
+	public ResponseEntity<OrderDto> getOrderById(@PathVariable String orderId) {
+		OrderDto orderDto = this.orderService.getOrderById(orderId);
+		return new ResponseEntity<OrderDto>(orderDto, HttpStatus.OK);
 	}
 
 	// get order by user

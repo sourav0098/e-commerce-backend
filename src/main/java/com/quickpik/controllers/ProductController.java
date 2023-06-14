@@ -116,8 +116,18 @@ public class ProductController {
 			@RequestParam("image") MultipartFile productImage) {
 
 		try {
-			String imageName = this.imageService.uploadImage(productImage, productImageUploadPath);
 			ProductDto productDto = this.productService.getProductById(productId);
+			String existingImageName = productDto.getProductImage();
+
+			// upload image and returns image name
+			String imageName = this.imageService.uploadImage(productImage, productImageUploadPath);
+
+			// delete the existing image if it exists
+			if (existingImageName != null && !existingImageName.isEmpty()) {
+				System.out.println(existingImageName);
+				this.imageService.deleteExistingImage(existingImageName, productImageUploadPath);
+			}
+		
 			productDto.setProductImage(imageName);
 			this.productService.updateProduct(productDto, productId);
 			ApiResponse apiResponse = ApiResponse.builder().message(imageName).status(HttpStatus.CREATED.value())

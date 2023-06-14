@@ -108,5 +108,20 @@
     "name": "aws.s3.categories-image-path",
     "type": "java.lang.String",
     "description": "A description for 'aws.s3.categories-image-path'"
+  },
+  {
+    "name": "client.url",
+    "type": "java.lang.String",
+    "description": "A description for 'client.url'"
+  },
+  {
+    "name": "frontend.url",
+    "type": "java.lang.String",
+    "description": "A description for 'frontend.url'"
+  },
+  {
+    "name": "frontend-url",
+    "type": "java.lang.String",
+    "description": "A description for 'frontend-url'"
   }
 ]}

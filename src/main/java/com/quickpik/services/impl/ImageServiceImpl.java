@@ -62,9 +62,14 @@ public class ImageServiceImpl implements ImageService {
 		}
 	}
 
-	@Override
-	public void deleteImage(String filename) {
-		s3client.deleteObject(bucketName, filename);
+	public void deleteExistingImage(String filename, String path) {
+		String objectKey = path + "/" + filename;
+		s3client.deleteObject(bucketName, objectKey);
 	}
 
+	@Override
+	public void deleteImage(String filename) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,4 +1,5 @@
 package com.quickpik.controllers;
+
 import java.io.IOException;
 
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
+import com.quickpik.dtos.UserResponseDto;
 import com.quickpik.payload.ApiResponse;
 import com.quickpik.services.ImageService;
 import com.quickpik.services.UserService;
@@ -39,15 +41,15 @@ public class UserController {
 	// Get a paginated list of all users, sorted and filtered according to given
 	// parameters.
 	@GetMapping
-	public ResponseEntity<PageableResponse<UserDto>> getAllUsers(
+	public ResponseEntity<PageableResponse<UserResponseDto>> getAllUsers(
 			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = "fname", required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
 
 		// Call the UserService to get the paginated list of users
-		PageableResponse<UserDto> users = this.userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
-		return new ResponseEntity<PageableResponse<UserDto>>(users, HttpStatus.OK);
+		PageableResponse<UserResponseDto> users = this.userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
+		return new ResponseEntity<PageableResponse<UserResponseDto>>(users, HttpStatus.OK);
 	}
 
 //	Get a user by user id
@@ -59,20 +61,20 @@ public class UserController {
 
 //	Get a user by email
 	@GetMapping("/email/{email}")
-	public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
-		return new ResponseEntity<UserDto>(this.userService.getUserByEmail(email), HttpStatus.OK);
+	public ResponseEntity<UserResponseDto> getUserByEmail(@PathVariable String email) {
+		return new ResponseEntity<UserResponseDto>(this.userService.getUserByEmail(email), HttpStatus.OK);
 	}
 
 //	Get a user by keyword matching the fname
 	@GetMapping("/search/{fname}")
-	public ResponseEntity<PageableResponse<UserDto>> searchUser(@PathVariable String fname,
+	public ResponseEntity<PageableResponse<UserResponseDto>> searchUser(@PathVariable String fname,
 			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = "fname", required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
-		PageableResponse<UserDto> response = this.userService.searchUser(fname, pageNumber, pageSize,
-				sortBy, sortDir);
-		return new ResponseEntity<PageableResponse<UserDto>>(response, HttpStatus.OK);
+		PageableResponse<UserResponseDto> response = this.userService.searchUser(fname, pageNumber, pageSize, sortBy,
+				sortDir);
+		return new ResponseEntity<PageableResponse<UserResponseDto>>(response, HttpStatus.OK);
 	}
 
 // Create new user
@@ -97,11 +99,20 @@ public class UserController {
 		String imageName;
 		try {
 
-			// upload image and returns image name
-			imageName = this.imageService.uploadImage(image, userImageUploadPath);
-
 			// get user by id and set the image name for the user
 			UserDto userDto = this.userService.getUserById(userId);
+
+			String existingImageName = userDto.getImage();
+			
+			// upload new image and returns image name
+			imageName = this.imageService.uploadImage(image, userImageUploadPath);
+
+			// delete the existing image if it exists
+			if (existingImageName != null && !existingImageName.isEmpty()) {
+				System.out.println(existingImageName);
+				this.imageService.deleteExistingImage(existingImageName, userImageUploadPath);
+			}
+
 			userDto.setImage(imageName);
 			userService.updateUser(userDto, userId);
 

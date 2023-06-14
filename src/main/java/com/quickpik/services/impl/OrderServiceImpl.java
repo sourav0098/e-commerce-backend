@@ -1,5 +1,6 @@
 package com.quickpik.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -22,12 +23,14 @@ import com.quickpik.entities.Cart;
 import com.quickpik.entities.CartItem;
 import com.quickpik.entities.Order;
 import com.quickpik.entities.OrderItem;
+import com.quickpik.entities.Product;
 import com.quickpik.entities.User;
 import com.quickpik.exception.BadApiRequestException;
 import com.quickpik.exception.ResourceNotFoundException;
 import com.quickpik.helper.Helper;
 import com.quickpik.repositories.CartRepository;
 import com.quickpik.repositories.OrderRepository;
+import com.quickpik.repositories.ProductRepository;
 import com.quickpik.repositories.UserRepository;
 import com.quickpik.services.OrderService;
 
@@ -44,6 +47,9 @@ public class OrderServiceImpl implements OrderService {
 	private CartRepository cartRepository;
 
 	@Autowired
+	private ProductRepository productRepository;
+
+	@Autowired
 	private ModelMapper modelMapper;
 
 	@Override
@@ -53,6 +59,13 @@ public class OrderServiceImpl implements OrderService {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<Order> page = this.orderRepository.findAll(pageable);
 		return Helper.getPageableResponse(page, OrderDto.class);
+	}
+
+	@Override
+	public OrderDto getOrderById(String orderId) {
+		Order order = this.orderRepository.findById(orderId)
+				.orElseThrow(() -> new ResourceNotFoundException("Order not found!"));
+		return modelMapper.map(order, OrderDto.class);
 	}
 
 	@Override
@@ -88,26 +101,45 @@ public class OrderServiceImpl implements OrderService {
 		String orderNumber = "ORD-" + System.currentTimeMillis() / 1000L + "-" + new Random().nextInt(1000);
 		AtomicReference<Double> totalOrderAmount = new AtomicReference<Double>((double) 0);
 
-		Order order = Order.builder().orderId(orderId).orderNumber(orderNumber)
-				.orderName(orderRequest.getOrderName()).shippingPhone(orderRequest.getShippingPhone())
-				.orderStatus(orderRequest.getOrderStatus()).paymentStatus(orderRequest.getPaymentStatus())
-				.shippingAddress(orderRequest.getShippingAddress()).city(orderRequest.getCity())
-				.province(orderRequest.getProvince()).postalCode(orderRequest.getPostalCode()).user(user).build();
+		Order order = Order.builder().orderId(orderId).orderNumber(orderNumber).orderName(orderRequest.getOrderName())
+				.shippingPhone(orderRequest.getShippingPhone()).orderStatus(orderRequest.getOrderStatus())
+				.paymentStatus(orderRequest.getPaymentStatus()).shippingAddress(orderRequest.getShippingAddress())
+				.city(orderRequest.getCity()).province(orderRequest.getProvince())
+				.postalCode(orderRequest.getPostalCode()).user(user).build();
 
 		// order items, amount to be set
+		List<OrderItem> orderItems = new ArrayList<>();
 
-		// convert cart items into order items
-		List<OrderItem> orderItems = cartItems.stream().map(cartItem -> {
+		for (CartItem cartItem : cartItems) {
+			Product product = cartItem.getProduct();
+			int requestedQuantity = cartItem.getQuantity();
+			int availableQuantity = product.getQuantity();
+
+			if (requestedQuantity > availableQuantity) {
+				// Skip adding this item to the order
+				continue;
+			}
+
 			// cart item -> order item
-			OrderItem orderItem = OrderItem.builder().quantity(cartItem.getQuantity()).product(cartItem.getProduct())
-					.totalPrice(cartItem.getQuantity() * cartItem.getProduct().getDiscountedPrice()).order(order)
-					.build();
+			OrderItem orderItem = OrderItem.builder().quantity(requestedQuantity).product(product)
+					.totalPrice(requestedQuantity * (product.getDiscountedPrice() != 0 ? product.getDiscountedPrice()
+							: product.getUnitPrice()))
+					.order(order).build();
 
 			// Update the totalOrderAmount by adding the price of the OrderItem
 			totalOrderAmount.set(totalOrderAmount.get() + orderItem.getTotalPrice());
 
-			return orderItem;
-		}).collect(Collectors.toList());
+			// Decrease product quantity by the ordered amount
+			product.setQuantity(availableQuantity - requestedQuantity);
+			this.productRepository.save(product);
+
+			orderItems.add(orderItem);
+		}
+
+		// If no order items were added, throw an exception
+		if (orderItems.isEmpty()) {
+			throw new BadApiRequestException("Insufficient stock! No items available for order");
+		}
 
 		// set order items and order amount
 		order.setOrderItems(orderItems);
@@ -116,8 +148,22 @@ public class OrderServiceImpl implements OrderService {
 		// Clear cart after order is made
 		cart.getItems().clear();
 		this.cartRepository.save(cart);
+
 		Order savedOrder = this.orderRepository.save(order);
+
+		// Update stock field for products with quantity 0
+		for (OrderItem orderItem : orderItems) {
+			Product product = orderItem.getProduct();
+			int remainingQuantity = product.getQuantity();
+
+			if (remainingQuantity == 0) {
+				product.setStock(false);
+				this.productRepository.save(product);
+			}
+		}
+
 		return modelMapper.map(savedOrder, OrderDto.class);
+
 	}
 
 	@Override

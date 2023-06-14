@@ -27,7 +27,6 @@ import com.quickpik.services.CategoryService;
 import com.quickpik.services.ImageService;
 import com.quickpik.services.ProductService;
 
-
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -120,11 +119,19 @@ public class CategoryController {
 		String imageName;
 		try {
 
+			// get category by id and set the image name for the category
+			CategoryDto categoryDto = this.categoryService.getCategoryById(categoryId);
+			String existingImageName = categoryDto.getCategoryImage();
+
 			// upload image and returns image name
 			imageName = this.imageService.uploadImage(image, categoryImageUploadPath);
 
-			// get category by id and set the image name for the category
-			CategoryDto categoryDto = this.categoryService.getCategoryById(categoryId);
+			// delete the existing image if it exists
+			if (existingImageName != null && !existingImageName.isEmpty()) {
+				System.out.println(existingImageName);
+				this.imageService.deleteExistingImage(existingImageName, categoryImageUploadPath);
+			}
+
 			categoryDto.setCategoryImage(imageName);
 			categoryService.updateCategory(categoryDto, categoryId);
 

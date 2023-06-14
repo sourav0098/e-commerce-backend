@@ -3,11 +3,11 @@ package com.quickpik.dtos;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import com.quickpik.entities.AuthenticationProvider;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserResponseDto {
 	private String userId;
 
 	@Size(max = 100, message = "First name cant be longer than 100 characters")
@@ -36,15 +36,10 @@ public class UserDto {
 	@NotBlank(message = "Please provide an email")
 	private String email;
 
-	@Size(min = 8, message = "Password must be at least 8 characters")
-	@Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{8,15}$", message = "Password should contain atleast one uppercase, one lowercase, one number and one special character")
-	private String password;
-
 	@Size(min = 10, max = 10, message = "Please provide a valid 10 digit phone number")
 	private String phone;
 
 	private String address;
-
 
 	@Pattern(regexp = "^(?!.*[DFIOQUdfioqu])[A-VXYa-vxy][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]?|\\s*$", message = "Please enter a valid postal code")
 	private String postalCode;
@@ -57,7 +52,7 @@ public class UserDto {
 	// Custom validator annotation
 //	@ImageNameValid
 	private String image;
-	
+
 	private AuthenticationProvider authenticationProvider;
 
 	private Set<RoleDto> roles = new HashSet<>();

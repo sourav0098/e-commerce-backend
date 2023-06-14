@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -54,7 +56,7 @@ public class User implements UserDetails {
 	@Column(unique = true, nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String password;
 
 	@Column(nullable = true)
@@ -74,6 +76,9 @@ public class User implements UserDetails {
 
 	@Column(nullable = true)
 	private String image;
+	
+	@Enumerated(EnumType.STRING)
+	private AuthenticationProvider authenticationProvider;
 
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)

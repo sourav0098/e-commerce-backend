@@ -14,5 +14,5 @@ import lombok.Setter;
 public class JwtResponseDto {
 	private String accessToken;
 	private String refreshToken;
-	private UserDto user;
+	private UserResponseDto user;
 }

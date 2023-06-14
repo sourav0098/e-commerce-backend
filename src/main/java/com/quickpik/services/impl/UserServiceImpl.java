@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.quickpik.dtos.PageableResponse;
 import com.quickpik.dtos.UserDto;
+import com.quickpik.dtos.UserResponseDto;
+import com.quickpik.entities.AuthenticationProvider;
 import com.quickpik.entities.Role;
 import com.quickpik.entities.User;
 import com.quickpik.exception.ConstraintViolationException;
@@ -54,10 +56,10 @@ public class UserServiceImpl implements UserService {
 
 	// Retrieve a user by their email address from the database.
 	@Override
-	public UserDto getUserByEmail(String email) {
+	public UserResponseDto getUserByEmail(String email) {
 		User user = this.userRepository.findByEmail(email)
 				.orElseThrow(() -> new ResourceNotFoundException("No user found!"));
-		return modelMapper.map(user, UserDto.class);
+		return modelMapper.map(user, UserResponseDto.class);
 	}
 
 	/**
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
 	 */
 
 	@Override
-	public PageableResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
+	public PageableResponse<UserResponseDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
 
 		// Sorting
 		// Create a Spring Data Sort object based on the given sortBy and sortDir
@@ -83,20 +85,20 @@ public class UserServiceImpl implements UserService {
 
 		// Convert the page of User objects into a PageableResponse of UserDto objects
 		// using a helper method.
-		PageableResponse<UserDto> response = Helper.getPageableResponse(page, UserDto.class);
+		PageableResponse<UserResponseDto> response = Helper.getPageableResponse(page, UserResponseDto.class);
 		return response;
 	}
 
 	// Search for users in the database whose first name contains the specified
 	// keyword.
 	@Override
-	public PageableResponse<UserDto> searchUser(String keyword, int pageNumber, int pageSize, String sortBy,
+	public PageableResponse<UserResponseDto> searchUser(String keyword, int pageNumber, int pageSize, String sortBy,
 			String sortDir) {
 		Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
 				: (Sort.by(sortBy).descending());
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		Page<User> page = this.userRepository.findByFnameContaining(keyword, pageable);
-		return Helper.getPageableResponse(page, UserDto.class);
+		return Helper.getPageableResponse(page, UserResponseDto.class);
 	}
 
 	// Create a new User
@@ -114,6 +116,10 @@ public class UserServiceImpl implements UserService {
 
 		// Encoding password
 		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+		if (userDto.getAuthenticationProvider() == null) {
+			userDto.setAuthenticationProvider(AuthenticationProvider.LOCAL);
+		}
 
 		// Convert DTO to entity
 		User user = modelMapper.map(userDto, User.class);

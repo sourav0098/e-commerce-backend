@@ -1,6 +1,7 @@
 package com.quickpik.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +33,8 @@ import com.quickpik.security.JwtAuthenticationFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final String[] PUBLIC_URLS = { "/swagger-ui/**", "/webjars/**", "/swagger-resources/**",
-			"/v3/api-docs/**" };
+	@Value("${frontend-url}")
+	private String frontendUrl;
 
 	/**
 	 * UserDetailsService instance to be used by the authentication provider.
@@ -49,14 +50,15 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests().antMatchers(PUBLIC_URLS).permitAll()
-				.antMatchers("/auth/login").permitAll().antMatchers("/auth/google").permitAll()
-				.antMatchers(HttpMethod.POST, "/users").permitAll()
-				.antMatchers(HttpMethod.GET).permitAll()
-				.antMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN").anyRequest().authenticated().and()
-				.exceptionHandling().authenticationEntryPoint(autenticationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+		http.csrf().disable().authorizeHttpRequests()
+		.antMatchers("/auth/login").permitAll()
+		.antMatchers("/auth/google/login").permitAll()
+		.antMatchers(HttpMethod.POST, "/users").permitAll()
+		.antMatchers(HttpMethod.GET).permitAll()
+		.antMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN").anyRequest().authenticated().and()
+		.exceptionHandling().authenticationEntryPoint(autenticationEntryPoint).and().sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
 		http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
@@ -97,12 +99,13 @@ public class SecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(true);
-		configuration.addAllowedOrigin("http://localhost:3000");
+		configuration.addAllowedOrigin(frontendUrl);
 		configuration.addAllowedHeader("Authorization");
 		configuration.addAllowedHeader("Content-Type");
 		configuration.addAllowedHeader("Accept");
 		configuration.addAllowedMethod("GET");
 		configuration.addAllowedMethod("POST");
+		configuration.addAllowedMethod("PATCH");
 		configuration.addAllowedMethod("PUT");
 		configuration.addAllowedMethod("DELETE");
 		configuration.addAllowedMethod("OPTIONS");

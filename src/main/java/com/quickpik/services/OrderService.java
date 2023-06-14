@@ -11,6 +11,8 @@ public interface OrderService {
 	// get all orders(for admin)
 	PageableResponse<OrderDto> getAllOrders(int pageNumber, int pageSize, String sortBy, String sortDir);
 
+	OrderDto getOrderById(String orderId);
+	
 	// get order for user
 	List<OrderDto> getOrdersByUser(String userId);
 
